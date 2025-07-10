@@ -1,18 +1,33 @@
-const display = document.getElementById('display');
-const buttons = document.querySelectorAll('.buttons button');
+function calculate(expression) {
+  const sanitized = expression
+    .replace(/÷/g, '/')
+    .replace(/×/g, '*')
+    .replace(/−/g, '-');
+  // eval is used for simplicity as the input is controlled
+  return eval(sanitized);
+}
+
+if (typeof module !== 'undefined') {
+  module.exports = { calculate };
+}
+
+let display;
+let buttons;
 let resetDisplay = false;
 
-buttons.forEach(button => {
-  button.addEventListener('click', () => {
-    const value = button.textContent;
+if (typeof document !== 'undefined') {
+  display = document.getElementById('display');
+  buttons = document.querySelectorAll('.buttons button');
+}
+
+if (buttons) {
+  buttons.forEach(button => {
+    button.addEventListener('click', () => {
+      const value = button.textContent;
 
     if (value === '=') {
       try {
-        const expression = display.textContent
-          .replace(/÷/g, '/')
-          .replace(/×/g, '*')
-          .replace(/−/g, '-');
-        const result = eval(expression);
+        const result = calculate(display.textContent);
         display.textContent = result;
         resetDisplay = true;
       } catch (e) {
@@ -29,5 +44,6 @@ buttons.forEach(button => {
         display.textContent += value;
       }
     }
+    });
   });
-});
+}
